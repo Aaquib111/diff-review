@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# review — float an AST-aware diff/comment UI over the current diff, emit review.json
+set -euo pipefail
+
+INIT="$HOME/.config/review/init.lua"
+
+if ! command -v nvim >/dev/null 2>&1; then
+  echo "review: nvim not found on PATH" >&2
+  exit 1
+fi
+
+# Detect the VCS. jj is checked first: colocated jj+git repos also satisfy
+# `git rev-parse`, and a jj repo is what we want to honor there.
+if ROOT="$(jj --ignore-working-copy root 2>/dev/null)"; then
+  REVIEW_VCS=jj
+  REVIEW_REF="${1:-@}"                    # parent -> @ (the working-copy commit)
+elif ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"; then
+  REVIEW_VCS=git
+  REVIEW_REF="${1:-HEAD}"                 # working tree vs HEAD
+else
+  echo "review: not inside a jj or git repository" >&2
+  exit 1
+fi
+
+REVIEW_OUT="$ROOT/.claude/review.json"
+mkdir -p "$(dirname "$REVIEW_OUT")"
+
+# Exported so init.lua / review.lua can read them via os.getenv(...).
+export REVIEW_VCS REVIEW_REF REVIEW_OUT REVIEW_ROOT="$ROOT"
+
+if [[ -n "${TMUX:-}" ]]; then
+  # -E ties the popup lifetime to the nvim process: either exit path tears the
+  # float down. -T/-b (title/border) need tmux >= 3.3 and degrade silently.
+  tmux display-popup -E -w 90% -h 90% \
+    -e "REVIEW_VCS=$REVIEW_VCS" \
+    -e "REVIEW_REF=$REVIEW_REF" \
+    -e "REVIEW_OUT=$REVIEW_OUT" \
+    -e "REVIEW_ROOT=$ROOT" \
+    "nvim -u '$INIT'"
+else
+  # No tmux: take over the current terminal. Bind this script to a terminal
+  # quick-window hotkey or a WM float rule for a real floating window.
+  exec nvim -u "$INIT"
+fi
