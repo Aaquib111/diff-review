@@ -4,8 +4,13 @@
 over the current `git`/`jj` diff and writes review comments to `.claude/review.json`
 for a `/review` slash command to consume.
 
-This README is installation-only. You are an AI agent installing this tool on the
-user's machine. Follow the steps in order; run the verification at the end.
+<img width="3024" height="1930" alt="demo" src="https://github.com/user-attachments/assets/b200aea1-a8c9-4221-9dc5-68a294f016b3" />
+
+The image shows the floating pane:
+
+1. The green boxes highlight multi-line comments you can make by making a visual selection in vim, then pressing `<leader>c`.
+2. The cyan box highlights all the files that have been edited, and you may move between them.
+3. The orange box is an editable vim buffer to directly apply edits instead of suggesting as a comment.
 
 ## Usage
 
@@ -26,7 +31,7 @@ macOS (Homebrew):
 
 ```bash
 brew install neovim tmux git
-brew install jujutsu   # optional, only if the user uses jj
+brew install jujutsu   # OPTIONAL, only if the user uses jj
 ```
 
 Debian/Ubuntu:
