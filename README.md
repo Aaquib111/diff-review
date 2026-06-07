@@ -7,6 +7,12 @@ for a `/review` slash command to consume.
 This README is installation-only. You are an AI agent installing this tool on the
 user's machine. Follow the steps in order; run the verification at the end.
 
+## Usage
+
+1. Run `review` as a bash command either within claude (via `!review` in chat) or in a separate pane.
+2. Review the files and add comments as necessary. Use `<leader>s` to save. This saves the comments to `.claude/` as a JSON.
+3. In the claude chat, run the `/review` skill. This prompts the model to look at the JSON comments and address them.
+
 ## Prerequisites
 
 Install any that are missing (detect first with `command -v`):
@@ -17,14 +23,18 @@ Install any that are missing (detect first with `command -v`):
 - **git** and/or **jj** (Jujutsu) — at least one is required; the tool auto-detects.
 
 macOS (Homebrew):
+
 ```bash
 brew install neovim tmux git
 brew install jujutsu   # optional, only if the user uses jj
 ```
+
 Debian/Ubuntu:
+
 ```bash
 sudo apt install neovim tmux git
 ```
+
 Treesitter parsers and a colorscheme are NOT required — the config is
 self-contained and falls back to Neovim's built-in syntax highlighting. If
 `nvim-treesitter` is already installed (lazy.nvim, vim-plug, packer, or native
@@ -33,6 +43,7 @@ packages), the config detects it and uses it for AST highlighting automatically.
 ## Install
 
 From the repository root:
+
 ```bash
 ./install.sh
 ```
@@ -48,6 +59,7 @@ This copies three things (override targets via `REVIEW_BIN_DIR`,
 | `commands/review.md` | `~/.claude/commands/review.md` | `/review` slash command |
 
 Ensure `~/.local/bin` is on `PATH` (the installer warns if not):
+
 ```bash
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc && exec zsh
 ```
